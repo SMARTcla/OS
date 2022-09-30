@@ -156,13 +156,76 @@ int main()
 {
     struct Student students[30] = {"Kononenko", 56, 45, 12, 1, "Max", 81, 9, 100, 1, "Key", 96, 99 ,76, 1, "Smart", 96, 99 ,6, 1, "Klon", 1, 1 ,1, 2};
     int n = sizeof(students)/sizeof(students[0]);
-    for ( int i = 0 ; i < count_n ; i++){
-        printf("%s %d : %d - %d - %d \n", students[i].surname, students[i].group, students[i].grades_web, students[i].grades_ua, students[i].grades_pr);
+    for (;;){
+        printf("------------Menu--------------\n");
+        printf("1 - Add student\n");
+        printf("2 - Duty\n");
+        printf("3 - Perfect\n");
+        printf("4 - Best\n");
+        printf("5 - Worst group\n");
+        printf("6 - Print group\n");
+        printf("7 - Exit\n");
+        printf("Your choise : ");
+        int choise = 0;
+        scanf("%d", &choise);
+        switch (choise) {
+            case 1:
+                char name[50];
+                int gr = 0;
+                int gr_pr = -1;
+                int gr_ua = -1;
+                int gr_web = -1;
+                printf("Enter surname : ");
+                scanf("%s", name);
+                while( gr < 1 || gr > 4){
+                    printf("Enter group : ");
+                    scanf("%d", &gr);
+                }
+                while( gr_pr < 0 || gr_pr > 100){
+                    printf("Enter grade ua : ");
+                    scanf("%d", &gr_pr);
+                }
+                while( gr_ua < 0 || gr_ua > 100){
+                    printf("Enter grade project : ");
+                    scanf("%d", &gr_ua);
+                }
+                while( gr_web < 0 || gr_web > 100){
+                    printf("Enter grade web : ");
+                    scanf("%d", &gr_web);
+                }
+                strcpy(students[count_n].surname, name);
+                students[count_n].group = gr;
+                students[count_n].grades_pr = gr_pr;
+                students[count_n].grades_ua = gr_ua;
+                students[count_n].grades_web = gr_web;
+                count_n++;
+                printf("Count_n = %d", count_n);
+                break;
+            case 6:
+                for ( int i = 0 ; i < count_n ; i++){
+                    printf("%s %d : %d - %d - %d \n", students[i].surname, students[i].group, students[i].grades_web, students[i].grades_ua, students[i].grades_pr);
+                }
+                break;
+            case 2:
+                duty(students);
+                break;
+            case 3:
+                perf(students);
+                break;
+            case 4:
+                best(students);
+                break;
+            case 5:
+                worst(students);
+                break;
+            case 7:
+                return 0;
+                break;
+            default:
+                printf("Out of range\n");
+                break;
+            }
     }
-    printf("------------Menu--------------\n");
-    duty(students);
-    perf(students);
-    best(students);
-    worst(students);
+
     return 0;
 }
