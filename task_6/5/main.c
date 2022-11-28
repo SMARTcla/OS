@@ -4,64 +4,49 @@
 #include <errno.h>
 #include <unistd.h>
 
-int my_system(const char *something) 
-{
-    pid_t PID;
-    int current_status;
+int my_system(const char *cmd_string) {
+    pid_t pid;
+    int status;
 
-    if (something == NULL){
+    if (cmd_string == NULL)
         return (1);
-    }
 
-    if ((PID = fork()) < 0) 
-    {
-        current_status = -1;
-    } 
-    else if (PID == 0) 
-    {
-        execl("/bin/sh", "sh", "-c", something, (char *)0);
+    if ((pid = fork()) < 0) {
+        status = -1;
+    } else if (pid == 0) {
+        execl("/bin/sh", "sh", "-c", cmd_string, (char *)0);
         _exit(127);
-    } 
-
-    else 
-    {
-        while (waitpid(PID, &current_status, 0) < 0) 
-        {
-            if (errno != EINTR) 
-            {
-                current_status = -1;
+    } else {
+        while (waitpid(pid, &status, 0) < 0) {
+            if (errno != EINTR) {
+                status = -1;
                 break;
             }
         }
     }
 
-    return (current_status);
+    return (status);
 }
 
-int main(void) 
-{
-    int current_status;
 
-    if ((current_status = my_system("date")) < 0) 
-    {
-        fprintf(stderr, "%s\n", "Exec error");
+
+int main(void) {
+    int status;
+
+    if ((status = my_system("date")) < 0) {
+        fprintf(stderr, "%s\n", "Error while invoking system()");
     }
+    fprintf(stderr, "Exit code: %d\n", status);
 
-    fprintf(stderr, "Code: %d\n", current_status);
-
-    if ((current_status = my_system("nosuchcommand")) < 0) 
-    {
-        fprintf(stderr, "%s\n", "Exec error");
+    if ((status = my_system("nosuchcommand")) < 0) {
+        fprintf(stderr, "%s\n", "Error while invoking system()");
     }
+    fprintf(stderr, "Exit code: %d\n", status);
 
-    fprintf(stderr, "Code: %d\n", current_status);
-
-    if ((current_status = my_system("who; exit 44")) < 0)  
-    {
-        fprintf(stderr, "%s\n", "Exec error");
+    if ((status = my_system("who; exit 44")) < 0)  {
+        fprintf(stderr, "%s\n", "Error while invoking system()");
     }
-
-    fprintf(stderr, "Code: %d\n", current_status);
+    fprintf(stderr, "Exit code: %d\n", status);
 
     return 0;
 }

@@ -6,8 +6,8 @@
 int
 main (int argc, char **argv)
 {
-  int first = 0;
-  int second = 0;
+  char *first = 0;
+  char *second = 0;
   char *third = NULL;
   int index;
   int c;

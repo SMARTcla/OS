@@ -5,31 +5,25 @@
 #define SECONDS 3
 
 int main() {
-    pid_t proportional_integral_derivative;
+    pid_t pid;
 
-    proportional_integral_derivative = fork();
+    printf("Forking started\n");
+    pid = fork();
 
-    int temp = 0;
-    time_t current_time = time(NULL);
+    int count = 0;
+    time_t currentTime = time(NULL);
 
-    if (proportional_integral_derivative == 0) 
-    {
-        while (time(NULL) != (current_time + SECONDS)) 
-        {
-            temp++;
+    if (pid == 0) {
+        while (time(NULL) != (currentTime + SECONDS)) {
+            count++;
         }
-        printf("Child proportional integral derivative = %d --- time = %d\n", getproportional_integral_derivative(), temp);
-    } 
-    else if (proportional_integral_derivative > 0) 
-    {
-        while (time(NULL) != (current_time + SECONDS)) 
-        {
-            temp++;
+        printf("Child PID = %d. Count = %d\n", getpid(), count);
+    } else if (pid > 0) {
+        while (time(NULL) != (currentTime + SECONDS)) {
+            count++;
         }
-        printf("Parent proportional integral derivative = %d --- time = %d\n", getproportional_integral_derivative(), temp);
-    } 
-    else 
-    {
+        printf("Parent PID = %d. Count = %d\n", getpid(), count);
+    } else {
         printf("Error\n");
     }
 

@@ -2,77 +2,60 @@
 #include <unistd.h>
 #include <wait.h>
 
-int main() 
-{
+int main() {
     setbuf(stdout, NULL);
-    int local_variable = 0;
-    pid_t PID[2];
-    PID[0] = fork();
+    printf("Main PID %d\n", getpid());
+    int local = 0;
+    pid_t pid[2];
+    pid[0] = fork();
 
-    if (PID[0] == 0) 
-    {
-        local_variable++;
-        printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
+    if (pid[0] == 0) {
+        // child process
+        local++;
+        printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
 
-        pid_t temp_pid[2];
-        temp_pid[0] = fork();
+        pid_t pidd[2];
+        pidd[0] = fork();
 
-        if (temp_pid[0] == 0) 
-        {
-
-            local_variable++;
-            printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
-        } 
-
-        else if (temp_pid[0] > 0) 
-        {
-            temp_pid[1] = fork();
-            if (temp_pid[1] == 0) 
-            {
-                local_variable++;
-                printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
-            } 
-            else if (temp_pid[1] > 0) 
-            {
-                printf("\n--------------\n Second identifier 1 = %d identifier 2 = %d\n--------------\n", temp_pid[0], temp_pid[1]);
+        if (pidd[0] == 0) {
+            // child of child
+            local++;
+            printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
+        } else if (pidd[0] > 0) {
+            pidd[1] = fork();
+            if (pidd[1] == 0) {
+                local++;
+                printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
+            } else if (pidd[1] > 0) {
+                printf("Second Main IDs1 = %d IDs2 = %d\n", pidd[0], pidd[1]);
                 wait(NULL);
             }
         }
-    } 
-    else if (PID[0] > 0) 
-    {
-        PID[1] = fork();
-        if (PID[1] == 0) 
-        {
-            local_variable++;
-            printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
-            pid_t temp_pid[2];
-            temp_pid[0] = fork();
-            if (temp_pid[0] == 0) 
-            {
-                local_variable++;
-                printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
-            } 
-
-            else if (temp_pid[0] > 0) 
-            {
-                temp_pid[1] = fork();
-
-                if (temp_pid[1] == 0) 
-                {
-                    local_variable++;
-                    printf("\n--------------\n Variable = %d\n Address = %p\n Parent PID = %d\n PID = %d\n--------------\n", local_variable, &local_variable, getppid(), getpid());
-                } 
-                else if (temp_pid[1] > 0) 
-                {
-                    printf("\n--------------\n Second identifier 1 = %d identifier 2 = %d\n--------------\n", temp_pid[0], temp_pid[1]);
+    } else if (pid[0] > 0) {
+        // parent
+        pid[1] = fork();
+        if (pid[1] == 0) {
+            // child of parent
+            local++;
+            printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
+            pid_t pidd[2];
+            pidd[0] = fork();
+            if (pidd[0] == 0) {
+                // parent of parent child
+                local++;
+                printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
+            } else if (pidd[0] > 0) {
+                // child of parent child
+                pidd[1] = fork();
+                if (pidd[1] == 0) {
+                    local++;
+                    printf("\nLocal variable = %d\nAddress = %p\nParent PID = %d\nOwn PID = %d\n", local, &local, getppid(), getpid());
+                } else if (pidd[1] > 0) {
+                    printf("Second Main IDs1 = %d IDs2 = %d\n", pidd[0], pidd[1]);
                 }
             }
-
-        } 
-        else if (PID[1] > 0) 
-        {
-            printf("\n--------------\n Main identifier 1 = %d identifier 2 = %d\n--------------\n", PID[0], PID[1]);
+        } else if (pid[1] > 0) {
+            printf("Main ID1 = %d ID2 = %d\n", pid[0], pid[1]);
             wait(NULL);
         }
     }
